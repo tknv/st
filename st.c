@@ -230,29 +230,32 @@ typedef struct {
 	int narg;              /* nb of args */
 } STREscape;
 
-/* Internal representation of the screen */
-typedef struct {
-	int row;      /* nb row */
-	int col;      /* nb col */
-	Line *line;   /* screen */
-	Line *alt;    /* alternate screen */
-	Line *hist;   /* history buffer */
-	int histi;    /* history index */
-	int scr;      /* scroll back */
-	int *dirty;  /* dirtyness of lines */
-	XftGlyphFontSpec *specbuf; /* font spec buffer used for rendering */
-	TCursor c;    /* cursor */
-	int top;      /* top    scroll limit */
-	int bot;      /* bottom scroll limit */
-	int mode;     /* terminal mode flags */
-	int esc;      /* escape state flags */
-	char trantbl[4]; /* charset table translation */
-	int charset;  /* current charset */
-	int icharset; /* selected charset for sequence */
-	int numlock; /* lock numbers in keyboard */
-	int *tabs;
-} Term;
-
+//<<<<<<< ours
+///* Internal representation of the screen */
+//typedef struct {
+//	int row;      /* nb row */
+//	int col;      /* nb col */
+//	Line *line;   /* screen */
+//	Line *alt;    /* alternate screen */
+//	Line *hist;   /* history buffer */
+//	int histi;    /* history index */
+//	int scr;      /* scroll back */
+//	int *dirty;  /* dirtyness of lines */
+//	XftGlyphFontSpec *specbuf; /* font spec buffer used for rendering */
+//	TCursor c;    /* cursor */
+//	int top;      /* top    scroll limit */
+//	int bot;      /* bottom scroll limit */
+//	int mode;     /* terminal mode flags */
+//	int esc;      /* escape state flags */
+//	char trantbl[4]; /* charset table translation */
+//	int charset;  /* current charset */
+//	int icharset; /* selected charset for sequence */
+//	int numlock; /* lock numbers in keyboard */
+//	int *tabs;
+//} Term;
+//
+//=======
+//>>>>>>> theirs
 /* Purely graphic info */
 typedef struct {
 	Display *dpy;
@@ -346,6 +349,29 @@ static void sendbreak(const Arg *);
 
 /* Config.h for applying patches and the configuration. */
 #include "config.h"
+
+/* Internal representation of the screen */
+typedef struct {
+	int row;      /* nb row */
+	int col;      /* nb col */
+	Line *line;   /* screen */
+	Line *alt;    /* alternate screen */
+	Line hist[histsize]; /* history buffer */
+	int histi;    /* history index */
+	int scr;      /* scroll back */
+	int *dirty;  /* dirtyness of lines */
+	XftGlyphFontSpec *specbuf; /* font spec buffer used for rendering */
+	TCursor c;    /* cursor */
+	int top;      /* top    scroll limit */
+	int bot;      /* bottom scroll limit */
+	int mode;     /* terminal mode flags */
+	int esc;      /* escape state flags */
+	char trantbl[4]; /* charset table translation */
+	int charset;  /* current charset */
+	int icharset; /* selected charset for sequence */
+	int numlock; /* lock numbers in keyboard */
+	int *tabs;
+} Term;
 
 /* Font structure */
 typedef struct {
@@ -1496,8 +1522,10 @@ ttyread(void)
 
 	/* keep any uncomplete utf8 char for the next call */
 	memmove(buf, ptr, buflen);
+
 	if (term.scr > 0 && term.scr < histsize-1)
 		term.scr++;
+
 	return ret;
 }
 
@@ -1506,10 +1534,10 @@ ttywrite(const char *s, size_t n)
 {
 	fd_set wfd, rfd;
 	ssize_t r;
+	size_t lim = 256;
 	Arg arg = (Arg){ .i = term.scr };
 
 	kscrolldown(&arg);
-	size_t lim = 256;
 
 	/*
 	 * Remember that we are using a pty, which might be a modem line.
@@ -3142,7 +3170,6 @@ tresize(int col, int row)
 	/* resize to new height */
 	term.line = xrealloc(term.line, row * sizeof(Line));
 	term.alt  = xrealloc(term.alt,  row * sizeof(Line));
-	term.hist  = xrealloc(term.hist,  histsize * sizeof(Line));
 	term.dirty = xrealloc(term.dirty, row * sizeof(*term.dirty));
 	term.tabs = xrealloc(term.tabs, col * sizeof(*term.tabs));
 

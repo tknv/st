@@ -7,7 +7,11 @@
  */
 static char font[] = "Liberation Mono:pixelsize=12:antialias=true:autohint=true";
 static int borderpx = 2;
-static int histsize = 2000;
+//<<<<<<< ours
+// static int histsize = 2000;
+//=======
+#define histsize 2000
+//>>>>>>> theirs
 
 /*
  * What program is execed by st depends of these precedence rules:
@@ -123,6 +127,7 @@ static const char *colorname[] = {
 static unsigned int defaultfg = 12;
 static unsigned int defaultbg = 8;
 static unsigned int defaultcs = 14;
+static unsigned int defaultrcs = 15;
 // =======
 // static unsigned int defaultfg = 7;
 // static unsigned int defaultbg = 0;
